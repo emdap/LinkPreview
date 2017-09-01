@@ -11,14 +11,15 @@ function createFields(src){
 
 	var owner = '<p> Account Type: ' + $(src).find('.profileItem-1908837923:first').html() + '</p>';
 	var since = '<p>' + $(src).find('.profileItem-1908837923:eq(1)').html() + '</p>';
-	
-	var address = '<p> Location: ' + $(src).find('.address-3119942078').html() + '</p>';
-	var map = '<p>' + $(src).find('.mapImage-1885488482').src() + '</p>';
+	var address =  $(src).find('.address-3119942078').html()
+	var mapAddress = address.replace(/ /g, "+");
+	var location = '<p> Location: ' + address + '</p>';
+	var map = '<p> <img width="600" src="https://maps.googleapis.com/maps/api/staticmap?center=' + mapAddress + '&zoom=13&scale=1&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C' + mapAddress + '" alt=""> </p>';
 
 	//can't get it to work with map
 	console.log(map);
 
-	finalVals = address + map + about + owner + since;
+	finalVals = location + map + about + owner + since;
 
 	addFields(finalVals);
 };
