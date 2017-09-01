@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+
+  "name": "Kijiji User Preview",
+  "description": "",
+  "version": "1.0",
+
+  // "content_scripts": [
+  // {
+  //   "matches": ["http://www.kijiji.ca/*"],
+  //   "js": ["test.js"],
+  //   "run_at": "document_start"
+  // }
+  // ],
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+
+  // "permissions": [
+  //   "activeTab",
+  //   "https://ajax.googleapis.com/"
+  // ]
+ "background":
+    {
+        "scripts": ["thirdparty/jquery.min.js"]
+    },
+
+  "permissions": ["tabs", "http://*/*", "https://*/*", "file:///*/*"],
+    "content_scripts": [
+    {
+        "matches": [ "http://www.kijiji.ca/*", "https://www.kijiji.ca/*"],
+        "js": ["thirdparty/jquery.min.js", "test.js"],
+        "css": ["test.css"],
+        "run_at": "document_end"
+    }
+  ]
+}
