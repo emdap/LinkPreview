@@ -1,0 +1,14 @@
+/*div.title:hover {
+	background-color: yellow !important;
+}*/
+
+.title_hov {
+	background-color: red !important;
+}
+
+#tail {
+    position: absolute;
+    float: left;
+    display: none;
+    background-color: #ffffff;
+ }
