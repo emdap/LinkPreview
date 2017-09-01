@@ -15,12 +15,12 @@
     },
 
   "permissions": ["tabs", "http://*/*", "https://*/*", "file:///*/*"],
-    "content_scripts": [
+    "content_scripts": [  
     {
         "matches": [ "http://www.kijiji.ca/*", "https://www.kijiji.ca/*"],
         "js": ["thirdparty/jquery.min.js", "createFields.js", "main.js"],
         "css": ["newDiv.css"],
-        "run_at": "document_end"
+        "run_at": "document_start"
     }
   ]
 }
