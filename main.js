@@ -1,12 +1,25 @@
+function addFields(fieldArray){
+	var $newHTML = "";
+	fieldArray.map(function(f) {$newHTML += f;});
+	$("#tail").html($newHTML);
+};
 
-function initPreview(divHght){
-	//initialize newDiv preview window
-	var $newDiv = $("<div id='tail'>Loading...</div>");
-	$('body').append($newDiv);
+function addPreviewContent(link){
+	$.ajax({
+		url: link,
+		type: 'GET',
+		success: function(data){
+			addFields(createFields(data));
+		}
+	});
 };
 
 function bindMouseDiv(divHght){
-//bind div tail to mouse movement
+//bind div tail to mouse movement and div.clearfix to mouseenter/leave	
+console.log("bind");
+	$("div.clearfix").not("div.breadcrumbLayout").mouseenter(function() {showPreview(this);});
+	$("div.clearfix").not("div.breadcrumbLayout").mouseleave(function() {hidePreview();});	
+
 	var divLft;
 	var divTp;
 
@@ -35,33 +48,7 @@ function bindMouseDiv(divHght){
 	    });
 		
 	});
-
-
-	$("div.info").mouseenter(function() {showPreview(this);});
-
-	$("div.info").mouseleave(function() {hidePreview();});	
 }
-
-function unbindMouseDiv(){
-	console.log("unbind");
-	// $(document).unbind('mousemove', function(e) {
-	// 	var pos = $('#tail').position();
-
-	// 	$('#tail').css({
-	//    left:  100,
-	//    top:   200
-	//     });
-	// });
-	$(document).off('mousemove');
-	$("div.info").off('mouseenter');
-	$("div.info").off('mouseleave');
-}
-
-function showPreview(page){
-		console.log("mouse enter");
-		$('#tail').fadeIn();
-    	addPreviewContent("http://www.kijiji.ca" + $(page).find("a").attr("href"));
-};
 
 function hidePreview(){
 		console.log("mouse leave");
@@ -70,21 +57,45 @@ function hidePreview(){
 };
 
 
+function initPreview(divHght){
+	//initialize newDiv preview window
+	var $newDiv = $("<div id='tail'>Loading...</div>");
+	$('body').append($newDiv);
+};
+
+function showPreview(page){
+		console.log("mouse enter");
+		$('#tail').fadeIn();
+    	addPreviewContent("http://www.kijiji.ca" + $(page).find("a").attr("href"));
+};
+
+function unbindMouseDiv(){
+	console.log("unbind");
+	$(document).off('mousemove');
+	$("div.clearfix").not("div.breadcrumbLayout").off('mouseenter');
+	$("div.clearfix").not("div.breadcrumbLayout").off('mouseleave');
+}
+
 $(document).ready(function(){
 	console.log("ready");
+	//track times button pushed
+	var shifted = 0
 	//400 is estimate for height of div with content in it
 	var divHght = 400;
 	initPreview();
 	bindMouseDiv(divHght);
-	test();
 
 	$(document).keydown(function(e) { 
-		if (e.which == 90) {
-			unbindMouseDiv();
-		}});
-	$(document).keyup(function(e) { 
-	if (e.which == 90) {
-		bindMouseDiv(divHght);
-	}});
+		if (e.which == 16) {
+			shifted += 1;
+			console.log(shifted);
+			if (shifted % 2 == 1){
+				unbindMouseDiv();
+			} else {
+				bindMouseDiv(divHght);
+			}
+		}
+	});
+
 });
 
