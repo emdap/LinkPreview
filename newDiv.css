@@ -9,10 +9,13 @@
 #tail {
     position: absolute;
     float: left;
-    display: none;
     border: thin solid #aaaaaa;
     background-color: #fefefe;
-    width: 400px;
+    width: 420px;
     padding: 10px;
     opacity: 0.95;
+    border-radius: 25px;
+ }
+ #rightleft {
+ 	clear: both;
  }
