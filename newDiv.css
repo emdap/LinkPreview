@@ -1,21 +1,14 @@
-/*div.title:hover {
-	background-color: yellow !important;
-}*/
-
-.title_hov {
-	background-color: red !important;
-}
-
 #tail {
     position: absolute;
     float: left;
     border: thin solid #aaaaaa;
     background-color: #fefefe;
-    width: 420px;
-    padding: 10px;
+    width: 400px;
+    padding-left: 10px;
+    padding-right: 10px;
     opacity: 0.95;
     border-radius: 25px;
- }
- #rightleft {
- 	clear: both;
+    font-family: Helvetica, Arial;
+    font-weight: lighter;
+    color: #111111;
  }
