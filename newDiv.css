@@ -10,5 +10,9 @@
     position: absolute;
     float: left;
     display: none;
-    background-color: #ffffff;
+    border: thin solid #aaaaaa;
+    background-color: #fefefe;
+    width: 400px;
+    padding: 10px;
+    opacity: 0.95;
  }
