@@ -1,13 +1,35 @@
-function initPreview(){
+
+function initPreview(divHght){
 	//initialize newDiv preview window, and bind to mouse movement
-	var $newDiv = $("<div id='tail'>test</div>");
+	var $newDiv = $("<div id='tail'>Loading...</div>");
 	$('body').append($newDiv);
+	
+	var divLft;
+	var divTp;
+
+	var lft = $(window).width();
+	var tp = $(window).height();
 
 	$(document).bind('mousemove', function(e){
-	$('#tail').css({
-	   left:  e.pageX + 20,
-	   top:   e.pageY - 10
-	    });
+		if ((e.pageX >= lft - 440) && (e.pageY - $(window).scrollTop() >= divHght)) {
+		   divLft =  e.pageX - 460;
+		   divTp = e.pageY - divHght;
+		} else if (e.pageY - $(window).scrollTop() >= divHght) {
+		   divLft = e.pageX + 20;
+		   divTp = e.pageY - divHght;
+		} else if (e.pageX >= lft - 440) {
+		   divLft =  e.pageX - 460;
+		   divTp = e.pageY - 10;
+		} else {
+			divLft = e.pageX + 20;
+			divTp = e.pageY - 10;
+		}
+
+			$('#tail').css({
+		   left:  divLft,
+		   top:   divTp
+		    });
+		
 	});
 };
 
@@ -27,7 +49,8 @@ function hidePreview(){
 
 $(document).ready(function(){
 	console.log("ready");
-	initPreview();
+	//600 is estimate for height of div with content in it
+	initPreview(400);
 	test();
 
 	$("div.info").mouseenter(function() {showPreview(this);});

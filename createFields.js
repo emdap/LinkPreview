@@ -14,19 +14,17 @@ function createFields(src){
 	var address =  $(src).find('.address-3119942078').html()
 	var mapAddress = address.replace(/ /g, "+");
 	var location = '<p> Location: ' + address + '</p>';
-	var map = '<p> <img width="600" src="https://maps.googleapis.com/maps/api/staticmap?center=' + mapAddress + '&zoom=13&scale=1&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C' + mapAddress + '" alt=""> </p>';
+	var map = '<p> <img width="400" src="https://maps.googleapis.com/maps/api/staticmap?center=' + mapAddress + '&zoom=13&scale=1&size=400x200&maptype=roadmap&format=png&visual_refresh=true&markers=size:lrg%7Ccolor:0xff99ff%7Clabel:%7C' + mapAddress + '" alt=""> </p>';
 
-	//can't get it to work with map
-	console.log(map);
-
-	finalVals = location + map + about + owner + since;
-
+	//finalVals = location + map + about + owner + since;
+	finalVals = [location, map, about, owner, since];
 	addFields(finalVals);
 };
 
-function addFields(fieldStr){
+function addFields(fieldArray){
 	console.log('add fields');
-	var $newHTML = $(fieldStr);
+	var $newHTML = "";
+	fieldArray.map(function(f) {$newHTML += f;});
 	$("#tail").html($newHTML);
 };
 
@@ -41,24 +39,6 @@ function addPreviewContent(link){
 		type: 'GET',
 		success: function(data){
 			createFields(data);
-			//$newHTML.map($("#tail").append)
-
-			//$("#tail").html($newHTML);
-//			 $(data).find('.
-//			var about = '<p>' + $(data).find('.header-4086619068').attr('data-reactid','290').html() + '</p>';
-//			var owner = '<p>' + $(data).find('.profileItem-1908837923').html() + '</p>';
-//			var since = '<p>' + $(data).find('.profileItem-1908837923').
-//			var content = $(data).find('#R2SProfile').html();
-			//console.log(about);
-//			var $newDiv = $(about);
-//			
-//			var $newDiv = $(content);
-	//		$("#tail").html($newDiv);
-//			$("#tail").append($newDiv);
-	//return $newDiv
-			//console.log($newDiv);
-		
-			// console.log(content);
 		}
 	});
 };
