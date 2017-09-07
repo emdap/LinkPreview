@@ -1,9 +1,9 @@
-#tail{
+.tail{
     position: absolute;
     float: left;
     border: thin solid #aaaaaa;
     background-color: #fefefe;
-    width: 400px;
+    width: 300px;
     padding-left: 10px;
     padding-right: 10px;
     opacity: 0.95;
@@ -12,8 +12,16 @@
     font-weight: lighter;
     color: #111111;
 
-      transition: top .5s, left .5s;
+
+ }
+
+.transition{
+          transition: top .5s, left .5s;
 -moz-transition: top .5s, left .5s; 
 -webkit-transition:top .5s, left .5s; 
 -o-transition: top .5s, left .5s;
- }
+}
+
+span{
+    font-size: 80%;
+}

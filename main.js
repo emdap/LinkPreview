@@ -2,14 +2,15 @@ var mouseEnter //tracks where mouse is for pausing div
 var divHeight; //updates when div has content loaded
 var divWidth; //same
 var intervalID; //interval that is checking for div changing size
-var minDivHeight = 100;	
-var maxDivHeight = 500; //set to default divHeight used for positioning
-
+var shifted = false //if shift has been pressed in document
 
 function addFields(fieldArray){
 	var $newHTML = "";
 	fieldArray.map(function(f) {$newHTML += f;});
-	$("#tail").html($newHTML);
+	console.log($.active);
+	if ($.active == 1){
+		$('.tail.active').html($newHTML);
+	}
 };
 
 function addPreviewContent(link){
@@ -23,13 +24,13 @@ function addPreviewContent(link){
 };
 
 function bindHover(){
-	$("div.clearfix").not("div.breadcrumbLayout").mouseenter(function() {showPreview(this);});
-	$("div.clearfix").not("div.breadcrumbLayout").mouseleave(function() {hidePreview();});
+
+	$('div.clearfix').not('div.breadcrumbLayout').mouseenter(function() {showPreview(this);});
+	$('div.clearfix').not('div.breadcrumbLayout').mouseleave(function() {hidePreview();});
 }
 
 function bindMouseDiv(divHeight, divWidth){
-//bind div tail to mouse movement and div.clearfix to mouseenter/leave	
-	console.log("bind");	
+//bind div.tail.active to mouse movement and div.clearfix to mouseenter/leave	
 
 	var divLeft;
 	var divTop;
@@ -37,27 +38,27 @@ function bindMouseDiv(divHeight, divWidth){
 	var wndwLeft = $(window).width();
 	var wndwTop = $(window).height();
 
-	if (divHeight < minDivHeight){//no content has loaded yet
-		divHeight = maxDivHeight;
-	}
-
 	$(document).bind('mousemove', function(e){
 		//adjust placement if mouse is near edge of window
+
+		divHeight = $('.tail.active').outerHeight();
+		divWidth = $('.tail.active').outerWidth();
+
 		if ((e.pageX >= wndwLeft - divWidth) && (e.pageY - $(window).scrollTop() >= divHeight)) {
-		   divLeft =  e.pageX - divWidth - 10;
-		   divTop = e.pageY - divHeight - 10;
+		   divLeft =  e.pageX - divWidth - 20;
+		   divTop = e.pageY - divHeight - 20;
 		} else if (e.pageY - $(window).scrollTop() >= divHeight) {
-		   divLeft = e.pageX + 10;
-		   divTop = e.pageY - divHeight - 10;
+		   divLeft = e.pageX + 20;
+		   divTop = e.pageY - divHeight - 20;
 		} else if (e.pageX >= wndwLeft - divWidth) {
-		   divLeft =  e.pageX - divWidth - 10;
-		   divTop = e.pageY + 10;
+		   divLeft =  e.pageX - divWidth - 20;
+		   divTop = e.pageY + 20;
 		} else {
-			divLeft = e.pageX + 10;
-			divTop = e.pageY + 10;
+			divLeft = e.pageX + 20;
+			divTop = e.pageY + 20;
 		}
 
-		$('#tail').css({
+		$('.tail.active').css({
 	   left:  divLeft,
 	   top:   divTop
 	    });
@@ -66,19 +67,23 @@ function bindMouseDiv(divHeight, divWidth){
 }
 
 function hidePreview(){
-	console.log("mouse leave");
-	$('#tail').toggleClass('transition');
+	console.log('mouse leave');
 	mouseEnter = false;
 	window.clearInterval(intervalID);
-	$('#tail').hide();
-	$('#tail').html("<p>Loading...</p>");
+	$('.tail.active').hide();
+	$('.tail.active').html('<p>Loading...</p>');
+
 };
 
 
 function initPreview(divHght){
 	//initialize newDiv preview window
-	var $newDiv = $("<div id='tail'><p>Loading...<p></div>");
+	console.log('init');
+	var $newDiv = $('<div class="tail active"><p>Loading...<p></div>');
 	$('body').append($newDiv);
+
+	allDivBindings();
+
 };
 
 function setIntervalX(callback, delay, repetitions) {
@@ -94,55 +99,101 @@ function setIntervalX(callback, delay, repetitions) {
 }
 
 function showPreview(page){
-	console.log("mouse enter");
-	$('#tail').toggleClass('transition');
+	console.log('mouse enter');
 	mouseEnter = true; //track when cursor in div so that div can be paused
-	$('#tail').fadeIn();
-	addPreviewContent("http://www.kijiji.ca" + $(page).find("a").attr("href"));
-	setIntervalX(function(){
-		if (minDivHeight < $('#tail').outerHeight()){
-			divHeight = $('#tail').outerHeight();
-			divWidth = $('#tail').outerWidth();
-			bindMouseDiv(divHeight, divWidth); 
-		}
-	}, 50, 20);
-
-
-		
-
+	$('.tail.active').fadeIn();
+	addPreviewContent('http://www.kijiji.ca' + $(page).find('a').attr('href'));
 };
 
 function unbindMouseDiv(){
-	console.log("unbind");
+	$('.tail.active').toggleClass('active');
 	$(document).off('mousemove');
-	$("div.clearfix").not("div.breadcrumbLayout").off('mouseenter');
-	$("div.clearfix").not("div.breadcrumbLayout").off('mouseleave');
+	//$('div.clearfix').not('div.breadcrumbLayout').off('mouseenter');
+	//$('div.clearfix').not('div.breadcrumbLayout').off('mouseleave');
+}
+
+function allDivBindings(){
+
+	bindMouseDiv(divHeight, divWidth);
+	bindHover();
+
+	$('.tail').toggleClass('transition', true);
+
+	$('.tail').dblclick(function(){
+		if ($('div.tail.active').length == 0){
+			$(this).toggleClass('active', true);
+			bindMouseDiv(divHeight, divWidth);
+			bindHover();
+		}
+	});
+		
+	$('.tail').mousedown(function(ev) {
+		movePreview(this, ev);
+	});
+
+	$('.tail').mouseup(function(){
+		$(document).off('mousemove');
+		$(this).toggleClass('active', false);
+	});
+
+	$('.tail').click(function() {
+		if(shifted == true){
+			$(this).remove();
+		}
+	})
+}
+
+function movePreview(curDiv, mouse1){
+	mouse1.preventDefault();
+	clickX = mouse1.pageX - $(curDiv).offset().left;
+	clickY = mouse1.pageY - $(curDiv).offset().top;
+
+	$(document).bind('mousemove', function(e) {
+		$(curDiv).toggleClass('transition', false);
+		$(curDiv).css({
+			left: e.pageX - clickX,
+			top: e.pageY - clickY
+		});
+	});
 }
 
 $(document).ready(function(){
 	console.log('ready');
 	//track times button pushed
-	var shifted = 0
+	var clickX;
+	var clickY;
+	var curLeft;
+	var curTop;
 
 
 	initPreview();
-	bindMouseDiv(divHeight, divWidth);
-	bindHover();
+
+	// $('.tail.active').bind('click', function(e){
+
+	// });
 
 	$(window).on('resize', bindMouseDiv(divHeight, divWidth));
 
 	$(document).keydown(function(e) { 
 		if (e.which == 16 && mouseEnter) {
-			shifted += 1;
+			shifted = true;
 			console.log(shifted);
-			if (shifted % 2 == 1){
+			
 				unbindMouseDiv();
-			} else {
-				bindMouseDiv(divHeight, divWidth);
-				bindHover();
-			}
+		}
+		 else if (e.which==78 && $('div.tail.active').length == 0){
+			console.log('making new div');
+			initPreview();
 		}
 	});
 
-});
+	$(document).keyup(function(e){
+		if (e.which == 16){
+			console.log(shifted);
+			shifted = false;
+		}
+	});
 
+
+
+	});
