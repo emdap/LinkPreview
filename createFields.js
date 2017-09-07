@@ -13,9 +13,9 @@ function createFields(src){
 	var since = '<p>' + $(src).find('.profileItem-1908837923:eq(1)').html() + '</p></span>';
 	
 	var address =  $(src).find('.address-3119942078').html()
-	var mapAddress = address.replace(/ /g, "+");
+	var mapAddress = (address.replace(/ /g, "+")).replace(/#/g,"");
 	var location = '<p>' + address + '</p>';
-	var map = '<p> <a href="https://www.google.com/maps/dir//' + mapAddress + '/"  target="_blank"> <img width="400" src="https://maps.googleapis.com/maps/api/staticmap?center=' + mapAddress + '&zoom=13&scale=1&size=400x200&maptype=roadmap&format=png&visual_refresh=true&markers=size:lrg%7Ccolor:0xff99ff%7Clabel:%7C' + mapAddress + '" alt=""></a></p>';
+	var map = '<p> <a href="https://www.google.com/maps/dir//' + mapAddress + '/"  target="_blank"> <img width="400" src="https://maps.googleapis.com/maps/api/staticmap?center=' + mapAddress + '&zoom=13&scale=1&size=400x200&maptype=roadmap&format=png&visual_refresh=true&markers=size:lrg%7Ccolor:0xff99ff%7Clabel:%7C' + mapAddress + '" id="prvwMap" alt=""></a></p>';
 	
 	var otherAdsLink = $(src).find('.profileLink-4028019214:first').attr('href');
 	var otherAds = '<span style="float: right; padding-right: 10px;"><a href=' + otherAdsLink + '  target="_blank">Other Ads</a>';
@@ -29,6 +29,7 @@ function createFields(src){
 	}
 
 	//finalVals = location + map + about + owner + since;
+	
 	finalVals = [about, location, map, owner, since, otherAds, web];
 	return finalVals;
 };
