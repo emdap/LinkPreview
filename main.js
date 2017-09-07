@@ -1,3 +1,11 @@
+var mouseEnter //tracks where mouse is for pausing div
+var divHeight; //updates when div has content loaded
+var divWidth; //same
+var intervalID; //interval that is checking for div changing size
+var minDivHeight = 100;	
+var maxDivHeight = 500; //set to default divHeight used for positioning
+
+
 function addFields(fieldArray){
 	var $newHTML = "";
 	fieldArray.map(function(f) {$newHTML += f;});
@@ -14,59 +22,94 @@ function addPreviewContent(link){
 	});
 };
 
-function bindMouseDiv(divHght){
-//bind div tail to mouse movement and div.clearfix to mouseenter/leave	
-console.log("bind");
+function bindHover(){
 	$("div.clearfix").not("div.breadcrumbLayout").mouseenter(function() {showPreview(this);});
-	$("div.clearfix").not("div.breadcrumbLayout").mouseleave(function() {hidePreview();});	
+	$("div.clearfix").not("div.breadcrumbLayout").mouseleave(function() {hidePreview();});
+}
 
-	var divLft;
-	var divTp;
+function bindMouseDiv(divHeight, divWidth){
+//bind div tail to mouse movement and div.clearfix to mouseenter/leave	
+	console.log("bind");	
 
-	var lft = $(window).width();
-	var tp = $(window).height();
+	var divLeft;
+	var divTop;
+
+	var wndwLeft = $(window).width();
+	var wndwTop = $(window).height();
+
+	if (divHeight < minDivHeight){//no content has loaded yet
+		divHeight = maxDivHeight;
+	}
 
 	$(document).bind('mousemove', function(e){
 		//adjust placement if mouse is near edge of window
-		if ((e.pageX >= lft - 440) && (e.pageY - $(window).scrollTop() >= divHght)) {
-		   divLft =  e.pageX - 460;
-		   divTp = e.pageY - divHght;
-		} else if (e.pageY - $(window).scrollTop() >= divHght) {
-		   divLft = e.pageX + 20;
-		   divTp = e.pageY - divHght;
-		} else if (e.pageX >= lft - 440) {
-		   divLft =  e.pageX - 460;
-		   divTp = e.pageY + 20;
+		if ((e.pageX >= wndwLeft - divWidth) && (e.pageY - $(window).scrollTop() >= divHeight)) {
+		   divLeft =  e.pageX - divWidth - 10;
+		   divTop = e.pageY - divHeight - 10;
+		} else if (e.pageY - $(window).scrollTop() >= divHeight) {
+		   divLeft = e.pageX + 10;
+		   divTop = e.pageY - divHeight - 10;
+		} else if (e.pageX >= wndwLeft - divWidth) {
+		   divLeft =  e.pageX - divWidth - 10;
+		   divTop = e.pageY + 10;
 		} else {
-			divLft = e.pageX + 20;
-			divTp = e.pageY + 20;
+			divLeft = e.pageX + 10;
+			divTop = e.pageY + 10;
 		}
 
 		$('#tail').css({
-	   left:  divLft,
-	   top:   divTp
+	   left:  divLeft,
+	   top:   divTop
 	    });
 		
 	});
 }
 
 function hidePreview(){
-		console.log("mouse leave");
-		$('#tail').html("<p>Loading...</p>");
-		$('#tail').hide();
+	console.log("mouse leave");
+	$('#tail').toggleClass('transition');
+	mouseEnter = false;
+	window.clearInterval(intervalID);
+	$('#tail').hide();
+	$('#tail').html("<p>Loading...</p>");
 };
 
 
 function initPreview(divHght){
 	//initialize newDiv preview window
-	var $newDiv = $("<div id='tail'>Loading...</div>");
+	var $newDiv = $("<div id='tail'><p>Loading...<p></div>");
 	$('body').append($newDiv);
 };
 
+function setIntervalX(callback, delay, repetitions) {
+    var x = 0;
+    intervalID = window.setInterval(function () {
+
+       callback();
+
+       if (++x === repetitions) {
+           window.clearInterval(intervalID);
+       }
+    }, delay);
+}
+
 function showPreview(page){
-		console.log("mouse enter");
-		$('#tail').fadeIn();
-    	addPreviewContent("http://www.kijiji.ca" + $(page).find("a").attr("href"));
+	console.log("mouse enter");
+	$('#tail').toggleClass('transition');
+	mouseEnter = true; //track when cursor in div so that div can be paused
+	$('#tail').fadeIn();
+	addPreviewContent("http://www.kijiji.ca" + $(page).find("a").attr("href"));
+	setIntervalX(function(){
+		if (minDivHeight < $('#tail').outerHeight()){
+			divHeight = $('#tail').outerHeight();
+			divWidth = $('#tail').outerWidth();
+			bindMouseDiv(divHeight, divWidth); 
+		}
+	}, 50, 20);
+
+
+		
+
 };
 
 function unbindMouseDiv(){
@@ -77,22 +120,26 @@ function unbindMouseDiv(){
 }
 
 $(document).ready(function(){
-	console.log("ready");
+	console.log('ready');
 	//track times button pushed
 	var shifted = 0
-	//400 is estimate for height of div with content in it
-	var divHght = 400;
+
+
 	initPreview();
-	bindMouseDiv(divHght);
+	bindMouseDiv(divHeight, divWidth);
+	bindHover();
+
+	$(window).on('resize', bindMouseDiv(divHeight, divWidth));
 
 	$(document).keydown(function(e) { 
-		if (e.which == 16) {
+		if (e.which == 16 && mouseEnter) {
 			shifted += 1;
 			console.log(shifted);
 			if (shifted % 2 == 1){
 				unbindMouseDiv();
 			} else {
-				bindMouseDiv(divHght);
+				bindMouseDiv(divHeight, divWidth);
+				bindHover();
 			}
 		}
 	});
