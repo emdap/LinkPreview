@@ -3,10 +3,11 @@ $(document).ready(function(){
 
 	initPreview();
 
-	//apply preview bindings
+	$('.tail.active').hide();
+	
 	bindPreview();
 
-	$(window).on('resize', bindMouse());
+	$(window).on('resize', bindPreview());
 
 	$(document).keydown(function(e) {
 		console.log('down');

@@ -1,50 +1,28 @@
 var shifted; //boolean for if shift is pressed
 
-function unbindMouse(){
-	$('.tail.active').toggleClass('active', false);
-	$(document).off('mousemove');
-	$('div.clearfix').not('div.breadcrumbLayout').off('mouseenter');
-	$('div.clearfix').not('div.breadcrumbLayout').off('mouseleave');
-}
-
-function movePreview(curDiv, mouse1){
-	//move preview that is frozen and has been clicked/dragged
-	mouse1.preventDefault();
-	var clickX = mouse1.pageX - $(curDiv).offset().left;
-	var clickY = mouse1.pageY - $(curDiv).offset().top;
-
-	$(document).bind('mousemove', function(e) {
-		$(curDiv).toggleClass('transition', false);
-		$(curDiv).css({
-			left: e.pageX - clickX,
-			top: e.pageY - clickY
-		});
-	});
-}	
-
 function bindPreview(){
 	bindMouse();
 
-	$('.tail').toggleClass('transition', true);
+	$('.tail.active').toggleClass('transition', true);
 
-	$('.tail').dblclick(function(){
+	$('.tail.active').dblclick(function(){
 		if ($('div.tail.active').length == 0){
 			$(this).toggleClass('active', true);
 			$(this).toggleClass('transition', true);
-			bindMouse();
+			bindPreview();
 		}
 	});
 		
-	$('.tail').mousedown(function(ev) {
+	$('.tail.active').mousedown(function(ev) {
 		movePreview(this, ev);
 	});
 
-	$('.tail').mouseup(function(){
+	$('.tail.active').mouseup(function(){
 		$(document).off('mousemove');
 		$(this).toggleClass('active', false);
 	});
 
-	$('.tail').click(function() {
+	$('.tail.active').click(function() {
 		if(shifted == true){
 			$(this).remove();
 		}
@@ -57,8 +35,9 @@ function bindKeyDown(e){
 		if ($('.tail.active').is(":visible")) {
 			unbindMouse();
 		}
-	} else if (e.which==78 && $('div.tail.active').length == 0){
+	} else if (e.which==78 && $('div.tail.active').length == 0){ //n has been pressed
 		initPreview();
+		bindPreview();
 	}
 }
 
@@ -74,8 +53,16 @@ function bindMouse(){
 	var divTop;
 	var wndwLeft = $(window).width();
 
-	$('div.clearfix').not('div.breadcrumbLayout').mouseenter(function() {showPreview(this);});
-	$('div.clearfix').not('div.breadcrumbLayout').mouseleave(function() {hidePreview();});
+	var $hoverElement = getHoverElement();
+	
+	$hoverElement.mouseover(function() {showPreviewCount(this);});
+	$hoverElement.not('div.breadcrumbLayout').mouseleave(function() {hidePreview();});
+
+	//if mouse is already in div.clearfix when tail is created (happens on first creation), then mouseEnter does not fire
+	//need to check if mouseOver, but this will keep firing for as long as mouse in range
+	//so just want to use that once for the initial startup and then turn it off to prevent forever loading previewWindows
+	
+
 
 	$(document).bind('mousemove', function(e){
 		//adjust placement if mouse is near edge of window
