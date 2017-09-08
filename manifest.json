@@ -18,8 +18,8 @@
     "content_scripts": [  
     {
         "matches": [ "http://www.kijiji.ca/b*", "https://www.kijiji.ca/b*"],
-        "js": ["thirdparty/jquery.min.js", "createFields.js", "main.js"],
-        "css": ["newDiv.css"],
+        "js": ["thirdparty/jquery.min.js", "createFields.js", "previewWindow.js", "bindHelpers.js", "bindings.js",  "main.js"],
+        "css": ["tailDiv.css"],
         "run_at": "document_start"
     }
   ]
