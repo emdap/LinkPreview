@@ -38,12 +38,12 @@ function bindPreview(){
 }
 
 function bindKeyDown(e){
-	if (e.which == 16){
-		shifted = true;
+	if (e.which == 16){ //pause previewwindow when shift key pressed
+		shifted = true; //shift+click closes window, record that shift is down
 		if ($('.tail.active').is(":visible")) {
 			unbindMouse()
 		}
-	} else if (e.which==78 && $('div.tail.active').length == 0){ //n has been pressed
+	} else if (e.which==78 && $('div.tail.active').length == 0){ //new previewwindow when n pressed
 		initPreview();
 		bindPreview();
 	}
@@ -51,7 +51,7 @@ function bindKeyDown(e){
 
 function bindKeyUp(e){
 	if (e.which == 16){
-		shifted = false;
+		shifted = false; //record shift back up
 	}
 }
 
@@ -91,11 +91,13 @@ function bindMouse(){
 			divLeft = e.pageX + 20;
 			divTop = e.pageY + 20;
 		}
-
+		
 		$('.tail.active').css({
-	   left:  divLeft,
-	   top:   divTop
+		    left:  divLeft,
+		    top:   divTop
 	    });
+
+	    $('.tail.active').attr('scrollTop', $('.tail.active')[0].getBoundingClientRect().top);
 		
 	});
 }

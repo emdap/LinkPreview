@@ -17,8 +17,8 @@ var mouseoverCount = 0;
 function showPreviewCount(page){
 	var $hoverElement = getHoverElement();
 	if (mouseoverCount > 0){
-		$(document).off('mouseover');
-		mouseoverCount = 0;
+		console.log(mouseoverCount);
+		$hoverElement.off('mouseover');
 		$hoverElement.mouseenter(function() {showPreview(this);});
 	} else {
 		mouseoverCount += 1;
@@ -47,5 +47,7 @@ function movePreview(curDiv, mouse1){
 			left: e.pageX - clickX,
 			top: e.pageY - clickY
 		});
+
+		$(curDiv).attr('scrollTop', $(curDiv)[0].getBoundingClientRect().top);
 	});
 }	
