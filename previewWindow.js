@@ -1,7 +1,13 @@
 function addFields(fieldArray){
 	//add the new content to preview 
 	var $newHTML = "";
-	fieldArray.map(function(f) {$newHTML += f;});
+	
+	fieldArray.map(function(f) {
+		if (f!='undefined'){
+			$newHTML += f;
+		}
+	});
+
 	$('.tail.active').html($newHTML);
 };
 
@@ -19,14 +25,15 @@ function addPreviewContent(link){
 			}
 		},
 		success: function(data){
-			addFields(createFields(data));
+			addFields(createFields(data, link));
+			$('.tail.active').css({width: 300});	
 		}
 	});
 };
 
 function initPreview(divHght){
 	//initialize newDiv preview 
-	var $preview = $('<div class="tail active" scrollTop=0><p>Loading...<p></div>');
+	var $preview = $('<div class="tail active" style="width: 75px" scrollTop=0><p>Loading...<p></div>');
 	$('body').append($preview);
 	$('.tail.active').hide();
 	
