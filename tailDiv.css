@@ -17,9 +17,7 @@
 
 .transition{
           transition: top .5s, left .5s;
--moz-transition: top .5s, left .5s; 
--webkit-transition:top .5s, left .5s; 
--o-transition: top .5s, left .5s;
+-webkit-transition:top .5s, left .5s;
 }
 
 span{
