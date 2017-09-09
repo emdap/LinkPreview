@@ -6,7 +6,6 @@ function hidePreview(){
 
 
 function showPreview(page){
-	console.log('mouseenter');
 	//show the active preview
 	$('.tail.active').fadeIn();
 	addPreviewContent('http://www.kijiji.ca' + $(page).find('a').attr('href'));
@@ -16,12 +15,11 @@ function showPreview(page){
 var mouseoverCount = 0;
 
 function showPreviewCount(page){
-	console.log(mouseoverCount);
 	var $hoverElement = getHoverElement();
 	if (mouseoverCount > 0){
-		$hoverElement.off('mouseover');
-		$hoverElement.mouseenter(function() {showPreview(this);});
+		$(document).off('mouseover');
 		mouseoverCount = 0;
+		$hoverElement.mouseenter(function() {showPreview(this);});
 	} else {
 		mouseoverCount += 1;
 		showPreview(page);

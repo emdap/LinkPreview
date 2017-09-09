@@ -3,8 +3,6 @@ $(document).ready(function(){
 
 	initPreview();
 
-	$('.tail.active').hide();
-	
 	bindPreview();
 
 	$(window).on('resize', bindPreview());
