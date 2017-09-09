@@ -5,24 +5,32 @@ function bindPreview(){
 
 	$('.tail.active').toggleClass('transition', true);
 
-	$('.tail.active').dblclick(function(){
+	$('.tail').dblclick(function(){
+		console.log($('div.tail.active').length);
 		if ($('div.tail.active').length == 0){
+			console.log('toggle');
 			$(this).toggleClass('active', true);
 			$(this).toggleClass('transition', true);
+			$(document).off('mousemove');
 			bindPreview();
 		}
 	});
 		
-	$('.tail.active').mousedown(function(ev) {
-		movePreview(this, ev);
+	$('.tail').mousedown(function(ev) {
+		console.log('down');
+		if ($('div.tail.active').length == 0){
+			movePreview(this, ev);
+		}
 	});
 
-	$('.tail.active').mouseup(function(){
-		$(document).off('mousemove');
-		$(this).toggleClass('active', false);
+	$('.tail').mouseup(function(){
+		console.log('up');
+		if ($('div.tail.active').length == 0){
+			$(document).off('mousemove');
+		}
 	});
 
-	$('.tail.active').click(function() {
+	$('.tail').click(function() {
 		if(shifted == true){
 			$(this).remove();
 		}
@@ -33,7 +41,7 @@ function bindKeyDown(e){
 	if (e.which == 16){
 		shifted = true;
 		if ($('.tail.active').is(":visible")) {
-			unbindMouse();
+			unbindMouse()
 		}
 	} else if (e.which==78 && $('div.tail.active').length == 0){ //n has been pressed
 		initPreview();
@@ -56,7 +64,7 @@ function bindMouse(){
 	var $hoverElement = getHoverElement();
 	
 	$hoverElement.mouseover(function() {showPreviewCount(this);});
-	$hoverElement.not('div.breadcrumbLayout').mouseleave(function() {hidePreview();});
+	$hoverElement.mouseleave(function() {hidePreview();});
 
 	//if mouse is already in div.clearfix when tail is created (happens on first creation), then mouseEnter does not fire
 	//need to check if mouseOver, but this will keep firing for as long as mouse in range

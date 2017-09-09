@@ -22,4 +22,6 @@ function initPreview(divHght){
 	//initialize newDiv preview 
 	var $preview = $('<div class="tail active"><p>Loading...<p></div>');
 	$('body').append($preview);
+	$('.tail.active').hide();
+	
 };
