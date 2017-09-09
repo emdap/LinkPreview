@@ -8,7 +8,7 @@ function addFields(fieldArray){
 		}
 	});
 
-	$('.tail.active').html($newHTML);
+	$('.tail').not('.inactive').html($newHTML);
 };
 
 var curReq = null; //for tracking ajax requests
@@ -26,7 +26,7 @@ function addPreviewContent(link){
 		},
 		success: function(data){
 			addFields(createFields(data, link));
-			$('.tail.active').css({width: 300});	
+			$('.tail').not('.inactive').css({width: 300});	
 		}
 	});
 };
