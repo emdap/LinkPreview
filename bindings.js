@@ -1,58 +1,46 @@
-var shifted; //boolean for if shift is pressed
+//functions that create a bind 
 
+function bindWindow(){
+	$(document).scroll(function() {
+		var scrollDiff;
+		$('.tail').not('.active').each(function(){
+			scrollDiff = $(window).scrollTop() + parseInt($(this).attr('scrollTop'),10);	
+			$(this).toggleClass('transition', true);
+			$(this).css({
+				top: scrollDiff
+			});
+		});
+    });
+
+	$(window).on('resize', bindPreview());
+
+	$(document).keydown(function(e) {
+		bindKeyDown(e);
+	});
+
+}
 function bindPreview(){
 	bindMouse();
 
 	$('.tail.active').toggleClass('transition', true);
 
 	$('.tail').dblclick(function(){
-		console.log($('div.tail.active').length);
-		if ($('div.tail.active').length == 0){
-			console.log('toggle');
-			$(this).toggleClass('active', true);
-			$(this).toggleClass('transition', true);
-			$(document).off('mousemove');
-			bindPreview();
-		}
+		$(this).remove();
 	});
 		
 	$('.tail').mousedown(function(ev) {
 		console.log('down');
-		if ($('div.tail.active').length == 0){
+		//if ($('div.tail.active').length == 0){
 			movePreview(this, ev);
-		}
+		//}
 	});
 
 	$('.tail').mouseup(function(){
 		console.log('up');
-		if ($('div.tail.active').length == 0){
-			$(document).off('mousemove');
-		}
+		//if ($('div.tail.active').length == 0){
+			$('.tail.inactive').off('mousemove');
+		//}
 	});
-
-	$('.tail').click(function() {
-		if(shifted == true){
-			$(this).remove();
-		}
-	})
-}
-
-function bindKeyDown(e){
-	if (e.which == 16){ //pause previewwindow when shift key pressed
-		shifted = true; //shift+click closes window, record that shift is down
-		if ($('.tail.active').is(":visible")) {
-			unbindMouse()
-		}
-	} else if (e.which==78 && $('div.tail.active').length == 0){ //new previewwindow when n pressed
-		initPreview();
-		bindPreview();
-	}
-}
-
-function bindKeyUp(e){
-	if (e.which == 16){
-		shifted = false; //record shift back up
-	}
 }
 
 function bindMouse(){
@@ -63,7 +51,7 @@ function bindMouse(){
 
 	var $hoverElement = getHoverElement();
 	
-	$hoverElement.mouseover(function() {showPreviewCount(this);});
+	$hoverElement.mouseenter(function() {showPreview(this);});
 	$hoverElement.mouseleave(function() {hidePreview();});
 
 	//if mouse is already in div.clearfix when tail is created (happens on first creation), then mouseEnter does not fire
@@ -91,13 +79,77 @@ function bindMouse(){
 			divLeft = e.pageX + 20;
 			divTop = e.pageY + 20;
 		}
-		
+
 		$('.tail.active').css({
 		    left:  divLeft,
 		    top:   divTop
 	    });
 
-	    $('.tail.active').attr('scrollTop', $('.tail.active')[0].getBoundingClientRect().top);
-		
+	    
+		if ($('div.tail.active').length > 0){ //HTML function errors out if tail.active no longer exists
+			$('.tail.active').attr('scrollTop', $('.tail.active')[0].getBoundingClientRect().top);
+		}
 	});
 }
+
+//functions that are called by the bind
+function bindKeyDown(e){
+	if (e.which == 16){ //pause previewwindow when shift key pressed
+		if ($('.tail.active').is(":visible")) {
+			$('.tail.active').toggleClass('inactive', true);
+			$('.tail.active.inactive').toggleClass('active', false);
+		}
+	} else if (e.which==78 && $('div.tail.active').length == 0){ //new previewwindow when n pressed
+		initPreview();
+		bindPreview();
+	} else if (e.which==82){ //get rid of all static preview windows on r
+		$('.tail.inactive').remove();
+	}
+}
+
+function hidePreview(){
+	//hide the active preview
+	$('.tail.active').hide();
+	$('.tail.active').html('<p>Loading...</p>');
+	$('.tail.active').css({width: 75});
+};
+
+
+function showPreview(page){
+	//show the active preview
+	$('.tail.active').fadeIn();
+	addPreviewContent('http://www.kijiji.ca' + $(page).find('a').attr('href'));
+	return true; //state of preview
+};
+
+// var mouseoverCount = 0;
+
+// function showPreviewCount(page){
+// 	console.log('mouseover');
+// 	var $hoverElement = getHoverElement();
+// 	if (mouseoverCount > 0){
+// 		console.log(mouseoverCount);
+// 		$hoverElement.off('mouseover');
+// 		$hoverElement.mouseenter(function() {showPreview(this);});
+// 	} else {
+// 		mouseoverCount += 1;
+// 		showPreview(page);
+// 	}
+// }
+
+function movePreview(curDiv, mouse1){
+	//move preview that is frozen and has been clicked/dragged
+	mouse1.preventDefault();
+	var clickX = mouse1.pageX - $(curDiv).offset().left;
+	var clickY = mouse1.pageY - $(curDiv).offset().top;
+
+	$(curDiv).bind('mousemove', function(e) {
+		$(curDiv).toggleClass('transition', false);
+		$(curDiv).css({
+			left: e.pageX - clickX,
+			top: e.pageY - clickY
+		});
+
+		$(curDiv).attr('scrollTop', $(curDiv)[0].getBoundingClientRect().top);
+	});
+}	

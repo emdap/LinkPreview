@@ -1,25 +1,52 @@
 .tail{
-    position: absolute;
-    float: left;
-    border: thin solid #aaaaaa;
     background-color: #fefefe;
-    width: 300px;
-    padding-left: 10px;
-    padding-right: 10px;
-    opacity: 0.95;
+    border: thin solid #aaaaaa;
     border-radius: 25px;
+    color: #111111;
+    float: left;
     font-family: Helvetica, Arial;
     font-weight: lighter;
-    color: #111111;
-
-
- }
-
-.transition{
-          transition: top .5s, left .5s;
--webkit-transition:top .5s, left .5s;
+    line-height: 1.0;
+    opacity: 0.95;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: absolute;
 }
 
-span{
+.tail p {
+    line-height: 1.0;
+}
+
+.tail h2 {
     font-size: 80%;
+    font-weight: lighter;
+}
+
+.transition {
+    transition: top .5s, left .5s;
+    -webkit-transition:top .5s, left .5s;
+}
+
+.tail span {
+    font-size: 80%;
+}
+
+.tail a:link {
+    text-decoration: none;
+    color: #000077;
+}
+
+.tail a:visited {
+    text-decoration: none;
+    color: #000077;
+}
+
+.tail a:selected {
+    text-decoration: underline;
+    color: #0000ff;
+}
+
+.tail a:hover {
+    text-decoration: underline;
+    color: #0000cc;
 }
