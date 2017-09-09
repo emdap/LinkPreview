@@ -39,6 +39,7 @@ function bindPreview(){
 		console.log('up');
 		//if ($('div.tail.active').length == 0){
 			$('.tail.inactive').off('mousemove');
+			$('.tail.fixed').off('mousemove');
 		//}
 	});
 }
@@ -63,8 +64,8 @@ function bindMouse(){
 	$(document).bind('mousemove', function(e){
 		//adjust placement if mouse is near edge of window
 
-		divHeight = $('.tail.active').outerHeight();
-		divWidth = $('.tail.active').outerWidth();
+		divHeight = $('.tail.active').not('.fixed').outerHeight();
+		divWidth = $('.tail.active').not('.fixed').outerWidth();
 
 		if ((e.pageX >= wndwLeft - divWidth) && (e.pageY - $(window).scrollTop() >= divHeight)) {
 		   divLeft =  e.pageX - divWidth - 20;
@@ -80,7 +81,7 @@ function bindMouse(){
 			divTop = e.pageY + 20;
 		}
 
-		$('.tail.active').css({
+		$('.tail.active').not('.fixed').css({
 		    left:  divLeft,
 		    top:   divTop
 	    });
@@ -100,16 +101,23 @@ function bindKeyDown(e){
 			$('.tail.active.inactive').toggleClass('active', false);
 		}
 	} else if (e.which==78 && $('div.tail.active').length == 0){ //new previewwindow when n pressed
+		if ($('div.tail.fixed').length > 0) {
+			$('div.tail.fixed').remove();
+		}
 		initPreview();
 		bindPreview();
 	} else if (e.which==82){ //get rid of all static preview windows on r
 		$('.tail.inactive').remove();
+		$('.tail.fixed').remove();
+	} else if (e.which == 70){
+		$('.tail.active').toggleClass('fixed', true);
+		$('.tail.active.fixed').toggleClass('active', false);
 	}
 }
 
 function hidePreview(){
 	//hide the active preview
-	$('.tail.active').hide();
+	$('.tail.active').not('.fixed').hide();
 	$('.tail.active').html('<p>Loading...</p>');
 	$('.tail.active').css({width: 75});
 };
@@ -117,7 +125,7 @@ function hidePreview(){
 
 function showPreview(page){
 	//show the active preview
-	$('.tail.active').fadeIn();
+	$('.tail.active').not('.fixed').fadeIn();
 	addPreviewContent('http://www.kijiji.ca' + $(page).find('a').attr('href'));
 	return true; //state of preview
 };
