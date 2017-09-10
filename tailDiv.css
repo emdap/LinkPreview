@@ -23,8 +23,8 @@
 }
 
 .transition {
-    transition: top .5s, left .5s;
-    -webkit-transition:top .5s, left .5s;
+    transition: top 1s ease, left 1s ease;
+    -webkit-transition:top 1s ease, left 1s ease;
 }
 
 .tail span {
@@ -49,4 +49,9 @@
 .tail a:hover {
     text-decoration: underline;
     color: #0000cc;
+}
+
+*:focus {
+    outline: none;
+    background-color: #eeeeee;
 }

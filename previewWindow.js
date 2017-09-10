@@ -33,8 +33,8 @@ function addPreviewContent(link){
 
 function initPreview(divHght){
 	//initialize newDiv preview 
-	var $preview = $('<div class="tail active" style="width: 75px" scrollTop=0><p>Loading...<p></div>');
+	var $preview = $('<div class="tail active" style="width: 75px" tabindex="0" scrollTop="0"><p>Loading...<p></div>');
 	$('body').append($preview);
 	$('.tail.active').hide();
-	
+	return $('.tail.active');
 };

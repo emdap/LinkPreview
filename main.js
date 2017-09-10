@@ -1,9 +1,7 @@
 $(document).ready(function(){
 	console.log('ready');
 
-	initPreview();
-
-	bindPreview();
+	bindPreview(initPreview());
 
 	bindWindow();
 	
