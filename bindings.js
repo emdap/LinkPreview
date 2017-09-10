@@ -19,29 +19,53 @@ function bindWindow(){
 	});
 
 }
-function bindPreview(){
+function bindPreview(curDiv){
 	bindMouse();
 
-	$('.tail.active').toggleClass('transition', true);
+	$(curDiv).toggleClass('transition', true);
 
-	$('.tail').dblclick(function(){
+	$(curDiv).dblclick(function(){
 		$(this).remove();
 	});
 		
-	$('.tail').mousedown(function(ev) {
+	$(curDiv).mousedown(function(ev) {
 		console.log('down');
 		//if ($('div.tail.active').length == 0){
+			$(document).off('keydown');
+			$(this).get(0).focus();
 			movePreview(this, ev);
 		//}
 	});
 
-	$('.tail').mouseup(function(){
+	$(curDiv).keydown(function(ev) {
+		bindPreviewKeys(this, ev);
+	});
+
+	$(curDiv).mouseup(function(e){
 		console.log('up');
 		//if ($('div.tail.active').length == 0){
-			$('.tail.inactive').off('mousemove');
-			$('.tail.fixed').off('mousemove');
+		$(document).keydown(function(e) {
+			bindKeyDown(e);
+		});
+		$(this).off('mousemove');
+		$(this).get(0).blur();
 		//}
 	});
+}
+
+function bindPreviewKeys(curDiv, e){
+
+	if (e.which == 16 && $('div.tail.active').length == 0){ //unpause window
+		$(curDiv).toggleClass('active', true);
+		$(curDiv).toggleClass('inactive', false);
+		$(curDiv).toggleClass('fixed', false);
+		$(curDiv).toggleClass('transition', true);
+		
+	} else if (e.which == 70){
+		console.log('here');
+		$(curDiv).toggleClass('fixed');
+		$(curDiv).toggleClass('inactive');
+	}
 }
 
 function bindMouse(){
@@ -53,7 +77,7 @@ function bindMouse(){
 	var $hoverElement = getHoverElement();
 	
 	$hoverElement.mouseenter(function() {showPreview(this);});
-	$hoverElement.mouseleave(function() {hidePreview();});
+	$hoverElement.mouseleave(function(e) {hidePreview(e);});
 
 	//if mouse is already in div.clearfix when tail is created (happens on first creation), then mouseEnter does not fire
 	//need to check if mouseOver, but this will keep firing for as long as mouse in range
@@ -63,9 +87,9 @@ function bindMouse(){
 
 	$(document).bind('mousemove', function(e){
 		//adjust placement if mouse is near edge of window
-
 		divHeight = $('.tail.active').not('.fixed').outerHeight();
 		divWidth = $('.tail.active').not('.fixed').outerWidth();
+	
 
 		if ((e.pageX >= wndwLeft - divWidth) && (e.pageY - $(window).scrollTop() >= divHeight)) {
 		   divLeft =  e.pageX - divWidth - 20;
@@ -101,11 +125,8 @@ function bindKeyDown(e){
 			$('.tail.active.inactive').toggleClass('active', false);
 		}
 	} else if (e.which==78 && $('div.tail.active').length == 0){ //new previewwindow when n pressed
-		if ($('div.tail.fixed').length > 0) {
-			$('div.tail.fixed').remove();
-		}
-		initPreview();
-		bindPreview();
+		bindPreview(initPreview());
+		//bindPreview();
 	} else if (e.which==82){ //get rid of all static preview windows on r
 		$('.tail.inactive').remove();
 		$('.tail.fixed').remove();
@@ -115,11 +136,13 @@ function bindKeyDown(e){
 	}
 }
 
-function hidePreview(){
+function hidePreview(e){
 	//hide the active preview
-	$('.tail.active').not('.fixed').hide();
-	$('.tail.active').html('<p>Loading...</p>');
-	$('.tail.active').css({width: 75});
+	if (e.relatedTarget.className != "tail active transition"){
+		$('.tail.active').not('.fixed').hide();
+		$('.tail.active').html('<p>Loading...</p>');
+		$('.tail.active').css({width: 75});
+	}
 };
 
 
@@ -144,6 +167,7 @@ function showPreview(page){
 // 		showPreview(page);
 // 	}
 // }
+
 
 function movePreview(curDiv, mouse1){
 	//move preview that is frozen and has been clicked/dragged
