@@ -20,4 +20,4 @@ Press 'n' to create new preview window - only works there are no preview windows
 
 # Update for other sites
 
-Create a new file in the 'webSpecific' folder with functions 'getHoverElement' and 'getURL', and update manifest.json to use this new file for the desired website. 'getHoverElement' returns the jQuery object that should show the preview window when moused over, and 'getURL' returns the any needed prefix for the url of the current website.
+Create a new file in the 'webSpecific' folder with function 'getHoverElement' and update manifest.json to use this new file for the desired website. 'getHoverElement' returns the jQuery object that should show the preview window when moused over.
