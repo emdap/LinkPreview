@@ -5,7 +5,7 @@ function bindWindow(){
 		var scrollDiff;
 		$('.tail').not('.active').each(function(){
 			scrollDiff = $(window).scrollTop() + parseInt($(this).attr('scrollTop'),10);	
-			$(this).toggleClass('transition', true);
+			$(this).toggleClass('fastTransition', true);
 			$(this).css({
 				top: scrollDiff
 			});
@@ -22,7 +22,7 @@ function bindWindow(){
 function bindPreview(curDiv){
 	bindMouse();
 
-	$(curDiv).toggleClass('transition', true);
+	$(curDiv).toggleClass('slowTransition', true);
 
 	$(curDiv).dblclick(function(){
 		$(this).remove();
@@ -59,10 +59,11 @@ function bindPreviewKeys(curDiv, e){
 		$(curDiv).toggleClass('active', true);
 		$(curDiv).toggleClass('inactive', false);
 		$(curDiv).toggleClass('fixed', false);
-		$(curDiv).toggleClass('transition', true);
+		$(curDiv).toggleClass('slowTransition', true);
+		$(curDiv).toggleClass('fastTransition', false);
 		
-	} else if (e.which == 70){
-		console.log('here');
+	} else if (e.which == 70){ //toggle fixed window
+
 		$(curDiv).toggleClass('fixed');
 		$(curDiv).toggleClass('inactive');
 	}
@@ -138,18 +139,20 @@ function bindKeyDown(e){
 
 function hidePreview(e){
 	//hide the active preview
-	if (e.relatedTarget.className != "tail active transition"){
-		$('.tail.active').not('.fixed').hide();
-		$('.tail.active').html('<p>Loading...</p>');
-		$('.tail.active').css({width: 75});
+	if (e.relatedTarget == 'null'){
+		if (e.relatedTarget.className != "tail active slowTransition"){
+			$('.tail.active').not('.fixed').hide();
+			$('.tail.active').html('<p>Loading...</p>');
+			$('.tail.active').css({width: 75});
 	}
+}
 };
 
 
 function showPreview(page){
 	//show the active preview
 	$('.tail.active').not('.fixed').fadeIn();
-	addPreviewContent('http://www.kijiji.ca' + $(page).find('a').attr('href'));
+	addPreviewContent($(page).find('a').attr('href'));
 	return true; //state of preview
 };
 
@@ -176,7 +179,8 @@ function movePreview(curDiv, mouse1){
 	var clickY = mouse1.pageY - $(curDiv).offset().top;
 
 	$(curDiv).bind('mousemove', function(e) {
-		$(curDiv).toggleClass('transition', false);
+		$(curDiv).toggleClass('slowTransition', false);
+		$(curDiv).toggleClass('fastTansition', false);
 		$(curDiv).css({
 			left: e.pageX - clickX,
 			top: e.pageY - clickY

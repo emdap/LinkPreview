@@ -22,9 +22,14 @@
     font-weight: lighter;
 }
 
-.transition {
+.slowTransition {
     transition: top 1s ease, left 1s ease;
     -webkit-transition:top 1s ease, left 1s ease;
+}
+
+.fastTransition {
+    transition: top .2s ease, left .2s ease;
+    -webkit-transition:top .2s ease, left .2s ease;
 }
 
 .tail span {
