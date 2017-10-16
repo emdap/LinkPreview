@@ -3,7 +3,7 @@
 
   "name": "Link Preview",
   "description": "Generates preview window of link that follows mouse when hovering specific elements",
-  "version": "1.0",
+  "version": "1.1",
 
 
  "background":
@@ -15,7 +15,7 @@
     "content_scripts": [  
     {
         "matches": [ "http://www.kijiji.ca/b*", "https://www.kijiji.ca/b*"],
-        "js": ["thirdparty/jquery.min.js", "webSpecific/kijiji.js", "createFields.js", "previewWindow.js", "bindings.js",  "main.js"],
+        "js": ["thirdparty/jquery.min.js", "webSpecific/kijiji.js", "webSpecific/createFields.js", "previewWindow.js", "bindings.js",  "main.js"],
         "css": ["tailDiv.css"],
         "run_at": "document_start"
     }
