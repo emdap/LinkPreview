@@ -11,7 +11,7 @@ function createFields(src, link){
 	// 	about = '<h2><strong>' + about +'</strong></h2>';
 	// }
 
-	var tempOwner = $(src).find('.profileItem-1908837923:first').not('span');
+	var tempOwner = $(src).find('.profileItem-1908837923:first');
 
 		if (typeof tempOwner.html() == 'undefined'){
 			var owner = '<span style="float: left; padding-left: 10px;"><strong>Log in to Kijiji for more info</strong>';
@@ -38,7 +38,12 @@ function createFields(src, link){
 		}
 	
 	var otherAdsLink = $(src).find('.profileLink-4028019214:first').attr('href');
-	var otherAds = '<span style="float: right; padding-right: 10px;"><strong><a href=' + otherAdsLink + '  target="_blank">Other Ads</a></strong>';
+
+	if (typeof otherAdsLink == 'undefined'){
+		var otherAds = '<span style="float: right; padding-right: 10px;">';
+	} else {
+		var otherAds = '<span style="float: right; padding-right: 10px;"><strong><a href=' + otherAdsLink + '  target="_blank">Other Ads</a></strong>';
+	}
 	
 	var webLink =  $(src).find('.profileLink-4028019214:eq(1)').attr('href');
 		
