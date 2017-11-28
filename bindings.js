@@ -1,6 +1,13 @@
+
+
 //functions that create a bind 
 
 function bindWindow(){
+	//creates bind for scrolling, keydown
+
+	//when scrolling window:
+	//search for inactive (paused or fixed) preview windows
+	//update their 'top' coordinate to maintain relative position
 	$(document).scroll(function() {
 		var scrollDiff;
 		$('.tail').not('.active').each(function(){
@@ -12,48 +19,59 @@ function bindWindow(){
 		});
     });
 
-	$(window).on('resize', bindPreview());
 
+	//when pressing key:
+	//call function that determines how to manipulate preview
 	$(document).keydown(function(e) {
 		bindKeyDown(e);
 	});
 
 }
 function bindPreview(curDiv){
+	//curDiv is the active preview window
+	//bind to mouse movements/clicks/keyboard
+
+	//binding details for mouse movement
 	bindMouse();
 
+	//slower movement location changes
 	$(curDiv).toggleClass('slowTransition', true);
 
+	//remove preview window by double clicking
 	$(curDiv).dblclick(function(){
 		$(this).remove();
 	});
 		
+	//binding for dragging a paused preview window
 	$(curDiv).mousedown(function(ev) {
-		console.log('down');
-		//if ($('div.tail.active').length == 0){
+			//toggle keydown binding when dragging
 			$(document).off('keydown');
 			$(this).get(0).focus();
+			//adjusts location to drag
 			movePreview(this, ev);
-		//}
 	});
 
+	//bind keydown presses ON preview window to function
+	//for changing states of paused/fixed window
 	$(curDiv).keydown(function(ev) {
 		bindPreviewKeys(this, ev);
 	});
 
+	//dragging preview window finished
 	$(curDiv).mouseup(function(e){
-		console.log('up');
-		//if ($('div.tail.active').length == 0){
+		//toggle keydown binding when dragging
 		$(document).keydown(function(e) {
 			bindKeyDown(e);
 		});
+		//turn off movePreview
 		$(this).off('mousemove');
 		$(this).get(0).blur();
-		//}
 	});
 }
 
 function bindPreviewKeys(curDiv, e){
+	//change state of paused or fixed preview window
+	//curDiv is the current preview window, e is the key pressed
 
 	if (e.which == 16 && $('div.tail.active').length == 0){ //unpause window
 		$(curDiv).toggleClass('active', true);
@@ -70,20 +88,20 @@ function bindPreviewKeys(curDiv, e){
 }
 
 function bindMouse(){
-//bind div.tail.active to mouse movement and ('div.clearfix').not('div.breadcrumbLayout') to mouseenter/leave
+	//bind preview window to mouse movement 
+	//bind hoverelement to mouse entering/leaving
+
 	var divLeft;
 	var divTop;
 	var wndwLeft = $(window).width();
 
+	//different depending on content script match
 	var $hoverElement = getHoverElement();
 	
+	//show/hide preview on mouse enter/leave of hoverelement
 	$hoverElement.mouseenter(function() {showPreview(this);});
 	$hoverElement.mouseleave(function(e) {hidePreview(e);});
 
-	//if mouse is already in div.clearfix when tail is created (happens on first creation), then mouseEnter does not fire
-	//need to check if mouseOver, but this will keep firing for as long as mouse in range
-	//so just want to use that once for the initial startup and then turn it off to prevent forever loading previewWindows
-	
 
 
 	$(document).bind('mousemove', function(e){
@@ -91,7 +109,8 @@ function bindMouse(){
 		divHeight = $('.tail.active').not('.fixed').outerHeight();
 		divWidth = $('.tail.active').not('.fixed').outerWidth();
 	
-
+		//position around mouse, move to other side of mouse
+		//if too close to edge of window
 		if ((e.pageX >= wndwLeft - divWidth) && (e.pageY - $(window).scrollTop() >= divHeight)) {
 		   divLeft =  e.pageX - divWidth - 20;
 		   divTop = e.pageY - divHeight - 20;
@@ -106,32 +125,46 @@ function bindMouse(){
 			divTop = e.pageY + 20;
 		}
 
+		//update coordinates of preview window
 		$('.tail.active').not('.fixed').css({
 		    left:  divLeft,
 		    top:   divTop
 	    });
 
 	    
-		if ($('div.tail.active').length > 0){ //HTML function errors out if tail.active no longer exists
+		if ($('div.tail.active').length > 0){ 
+			//HTML function errors out if tail.active no longer exists
+			//update scrollTop so can be ref'd later to 
+			//maintain relative position on scrolling
 			$('.tail.active').attr('scrollTop', $('.tail.active')[0].getBoundingClientRect().top);
 		}
 	});
 }
 
-//functions that are called by the bind
+
+
+//helper functions for above
+
 function bindKeyDown(e){
-	if (e.which == 16){ //pause previewwindow when shift key pressed
+	//keyboard bindings from document
+	//new preview window, fix active window, pause active window, remove all static windows
+
+	if (e.which == 16){ 
+	//pause previewwindow when shift key pressed
 		if ($('.tail.active').is(":visible")) {
 			$('.tail.active').toggleClass('inactive', true);
 			$('.tail.active.inactive').toggleClass('active', false);
 		}
-	} else if (e.which==78 && $('div.tail.active').length == 0){ //new previewwindow when n pressed
+	} else if (e.which==78 && $('div.tail.active').length == 0){
+		//new previewwindow when n pressed
+		//only if no current active window
 		bindPreview(initPreview());
-		//bindPreview();
-	} else if (e.which==82){ //get rid of all static preview windows on r
+	} else if (e.which==82){ 
+		//get rid of all static preview windows on r
 		$('.tail.inactive').remove();
 		$('.tail.fixed').remove();
 	} else if (e.which == 70){
+		//make active preview window be fixed
 		$('.tail.active').toggleClass('fixed', true);
 		$('.tail.active.fixed').toggleClass('active', false);
 	}
@@ -139,8 +172,10 @@ function bindKeyDown(e){
 
 function hidePreview(e){
 	//hide the active preview
+
 	if (e.relatedTarget == 'null'){
 		if (e.relatedTarget.className != "tail active slowTransition"){
+			//only hide if not accidentally mousing through preview window itself
 			$('.tail.active').not('.fixed').hide();
 			$('.tail.active').html('<p>Loading...</p>');
 			$('.tail.active').css({width: 75});
@@ -156,29 +191,17 @@ function showPreview(page){
 	return true; //state of preview
 };
 
-// var mouseoverCount = 0;
-
-// function showPreviewCount(page){
-// 	console.log('mouseover');
-// 	var $hoverElement = getHoverElement();
-// 	if (mouseoverCount > 0){
-// 		console.log(mouseoverCount);
-// 		$hoverElement.off('mouseover');
-// 		$hoverElement.mouseenter(function() {showPreview(this);});
-// 	} else {
-// 		mouseoverCount += 1;
-// 		showPreview(page);
-// 	}
-// }
-
 
 function movePreview(curDiv, mouse1){
 	//move preview that is frozen and has been clicked/dragged
+	//curDiv is active preview window, mouse1 is initial mouse event
+
 	mouse1.preventDefault();
 	var clickX = mouse1.pageX - $(curDiv).offset().left;
 	var clickY = mouse1.pageY - $(curDiv).offset().top;
 
 	$(curDiv).bind('mousemove', function(e) {
+		//update coordinates as mouse moves
 		$(curDiv).toggleClass('slowTransition', false);
 		$(curDiv).toggleClass('fastTansition', false);
 		$(curDiv).css({
@@ -186,6 +209,7 @@ function movePreview(curDiv, mouse1){
 			top: e.pageY - clickY
 		});
 
+		//update relative scroll position
 		$(curDiv).attr('scrollTop', $(curDiv)[0].getBoundingClientRect().top);
 	});
 }	
