@@ -1,3 +1,6 @@
+# Note
+Needs to be updated, Kijiji data is returned differently than before, and fields aren't being populated. Still shows an interactive popup window, but with undefined fields.
+
 # LinkPreview
 Google Chrome extension to show more details of link being moused over in a floating div that follows the mouse. Currently works for Kijiji.ca.
 
